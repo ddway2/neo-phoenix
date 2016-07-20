@@ -5,4 +5,6 @@ MAINTAINER Pierre Salmon <pierre.salmon@smartcontext.fr>
 RUN mkdir -p /src
 COPY src /src
 
-WORKDIR /src 
+WORKDIR /src
+
+RUN cbuild -C  

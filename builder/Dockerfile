@@ -15,7 +15,10 @@ RUN apt-get install -y cmake \
     pkg-config \
     rsync \
     git \
-    lsb-release
+    lsb-release \
+    lintian \
+    sudo \
+    apt-utils
 
 RUN mkdir -p /build
 WORKDIR /build

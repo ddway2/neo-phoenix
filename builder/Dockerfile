@@ -59,16 +59,30 @@ RUN apt-get install -y \
     python3-dev \
     python-setuptools \
     libboost1.55-dev \
-    libboost-thread1.55-dev
+    libboost-thread1.55-dev \
+    devscripts \
+    dh-autoreconf \
+    dh-systemd \
+    python-sphinx
 
-# Build nghttp2
+# Build debian package spdylay
 WORKDIR /build
-RUN git clone https://github.com/ddway2/nghttp2.git && \
-    cd nghttp2 && \
-    mkdir build && cd build && \
-    cmake -DENABLE_ASIO_LIB=ON -DENABLE_LIB_ONLY=ON .. && \
-    make install && \
+RUN dget -x http://http.debian.net/debian/pool/main/s/spdylay/spdylay_1.3.2-2.dsc && \
+    cd spdylay-1.3.2 && \
+    dpkg-buildpackage -b -uc && \
+    cd .. && dpkg -i libspdylay7*.deb libspdylay-dev*.deb libspdylay-utils*.deb && \
     rm -rf /build/*
+
+# Build debian package nghttp2
+WORKDIR /build
+RUN dget -u http://http.debian.net/debian/pool/main/n/nghttp2/nghttp2_1.12.0-2.dsc && \
+    cd nghttp2-1.12.0 && \
+    dpkg-buildpackage -b -uc && \
+    cd .. && dpkg -i libnghttp2-14_*.deb  libnghttp2-dev_*.deb nghttp2_*.deb  nghttp2-client_*.deb  nghttp2-proxy_*.deb  nghttp2-server_*.deb && \
+    rm -rf /build/*
+
+
+
 
 CMD ["bash"]
 

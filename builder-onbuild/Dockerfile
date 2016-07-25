@@ -1,4 +1,4 @@
-FROM phoenix-builder
+FROM ddway2/phoenix
 MAINTAINER Pierre Salmon <pierre.salmon@smartcontext.fr>
 
 # Ready to go

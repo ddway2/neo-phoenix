@@ -1,4 +1,4 @@
-FROM phoenix-builder
+FROM ddway2/phoenix
 
 ENV USER_ID 	105
 ENV USER_GID 	105

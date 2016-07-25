@@ -7,6 +7,25 @@ ME=$(basename $0)
 MYDIR=$(dirname $0)
 MYDIR=$(cd $MYDIR && pwd)
 
+##CPKG_DIRS##
+# CPKG BOOTSTRAP BEGIN
+if [ -z "$LIBDIR" ]; then
+    export BINDIR=$MYTOPDIR/bin
+    export ETCDIR=$MYTOPDIR/etc
+    export LIBDIR=$MYTOPDIR/lib
+    export SHAREDIR=$MYTOPDIR/share
+    export VARDIR=$MYTOPDIR/var
+    export LOGDIR=$MYTOPDIR/log
+fi
+# CPKG BOOTSTRAP END
+
+
+##################################################
+#
+# Main
+#
+##################################################
+
 # Name
 PROJECT=$1
 

@@ -2,10 +2,8 @@ FROM phoenix-builder
 MAINTAINER Pierre Salmon <pierre.salmon@smartcontext.fr>
 
 # Ready to go
-ONBUILD ADD src/ /src/build
-ONBUILD RUN cd /src/build && /scripts/build.sh
-
-RUN mkdir -p /scripts
+ONBUILD ADD app/ /src/app
+ONBUILD RUN cd /src/app && /scripts/build.sh
 
 EXPOSE 8080
 

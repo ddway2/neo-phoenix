@@ -49,7 +49,7 @@ RUN git clone https://github.com/ddway2/cbuild.git && \
     rm -rf /build/*
 
 # Prepare to build
-RUN mkdir -p /src/build && mkdir -p /scripts
+RUN mkdir -p /src/app && mkdir -p /scripts
 
 ADD scripts/build.sh /scripts/build.sh
 

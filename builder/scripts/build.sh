@@ -3,7 +3,7 @@
 set -e
 
 PROJECT_DIR=$1
-[ -z "$PROJECT_DIR" ] && PROJECT_DIR=/src/build
+[ -z "$PROJECT_DIR" ] && PROJECT_DIR=/src/app
 
 cd $PROJECT_DIR
 echo "Directory to build $PROJECT_DIR"

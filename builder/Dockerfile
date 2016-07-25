@@ -4,9 +4,7 @@ MAINTAINER Pierre Salmon <pierre.salmon@smartcontext.fr>
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update Debian Version
-RUN apt-get update -y
-RUN apt-get dist-upgrade -y
-RUN apt-get install -y cmake \
+RUN apt-get update -y && apt-get install -y cmake \
     build-essential \
     debhelper \
     equivs \

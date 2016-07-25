@@ -1,10 +1,7 @@
-FROM builder
+FROM phoenix-builder
 MAINTAINER Pierre Salmon <pierre.salmon@smartcontext.fr>
 
 # Ready to go
-RUN mkdir -p /src
-COPY src /src
-
-WORKDIR /src
-
-RUN cbuild -C  
+ONBUILD ADD src/ /src/build
+ONBUILD RUN cd /src/build && /scripts/build.sh
+  

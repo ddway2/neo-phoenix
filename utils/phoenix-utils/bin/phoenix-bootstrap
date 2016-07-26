@@ -10,15 +10,16 @@ MYDIR=$(cd $MYDIR && pwd)
 ##CPKG_DIRS##
 # CPKG BOOTSTRAP BEGIN
 if [ -z "$LIBDIR" ]; then
-    export BINDIR=$MYTOPDIR/bin
-    export ETCDIR=$MYTOPDIR/etc
-    export LIBDIR=$MYTOPDIR/lib
-    export SHAREDIR=$MYTOPDIR/share
-    export VARDIR=$MYTOPDIR/var
-    export LOGDIR=$MYTOPDIR/log
+    export BINDIR=$MYDIR/bin
+    export ETCDIR=$MYDIR/etc
+    export LIBDIR=$MYDIR/lib
+    export SHAREDIR=$MYDIR/share
+    export VARDIR=$MYDIR/var
+    export LOGDIR=$MYDIR/log
 fi
 # CPKG BOOTSTRAP END
 
+. $(cpkg-config -L)
 
 ##################################################
 #
@@ -26,8 +27,14 @@ fi
 #
 ##################################################
 
+OPTSPECS[s]="BT_SERVER_NAME:server:app server name:"
+OPTSPECS[n]="BT_MODULE_NAME::module name:$REQUIRED"
+
+cp_get_options "$@"
+cp_check_conf
+
 # Name
-PROJECT=$1
+PROJECT=$BT_MODULE_NAME
 
 PROJECT_DIR=$WORKDIR/$PROJECT
 mkdir -p $PROJECT_DIR
@@ -36,7 +43,7 @@ mkdir -p $PROJECT_DIR
 cat <<EOF > $PROJECT_DIR/Dockerfile.onbuild
 FROM ddway2/phoenix-onbuild
 
-CMD ["bash"]
+CMD ["/usr/bin/${BT_SERVER_NAME}"]
 EOF
 
 cat <<EOF > $PROJECT_DIR/Dockerfile.dev
@@ -46,7 +53,9 @@ CMD ["bash"]
 EOF
 
 # Generate project structure
-mkdir -p $PROJECT_DIR/app/sources/{binaries,include}
+INCLUDE_DIR=$PROJECT_DIR/app/sources/include/${$PROJECT}
+BINARIES_DIR=$PROJECT_DIR/app/sources/binaries/${PROJECT}
+mkdir -p $INCLUDE_DIR $BINARIES_DIR
 cat <<EOF > $PROJECT_DIR/app/cbuild.conf
 PKG_CATS=(
     [deb]=devel
@@ -67,4 +76,7 @@ EOF
 cd $PROJECT_DIR
 git init
 echo "**/CMakeList.txt" > .gitignore
+
+rsync -avP -q $SHAREDIR/templates/app/sources/binaries/ $BINARIES_DIR
+
 

@@ -27,9 +27,3 @@ fi
 #
 ##################################################
 
-# Generate builder-dev images
-cd $SHAREDIR/support/builder-dev
-docker build --build-arg USER_ID=$UID --build-arg USER_GID=$GID -t builder-dev .
-
-# Run Image
-docker run -d --name=builder-dev -v $PWD:/src/app builder-dev

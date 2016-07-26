@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+WORKDIR=$PWD
+ME=$(basename $0)
+MYDIR=$(dirname $0)
+MYDIR=$(cd $MYDIR && pwd)
+
+##CPKG_DIRS##
+# CPKG BOOTSTRAP BEGIN
+if [ -z "$LIBDIR" ]; then
+    export BINDIR=$MYDIR/bin
+    export ETCDIR=$MYDIR/etc
+    export LIBDIR=$MYDIR/lib
+    export SHAREDIR=$MYDIR/share
+    export VARDIR=$MYDIR/var
+    export LOGDIR=$MYDIR/log
+fi
+# CPKG BOOTSTRAP END
+
+. $(cpkg-config -L)
+
+
+
+# Generate builder-dev images
+cd $SHAREDIR/support/builder-dev
+docker build --build-arg USER_ID=$UID --build-arg USER_GID=$GID -t builder-dev .
+
+# Run Image
+docker run -d --name=builder-dev -v $PWD:/src/app builder-dev

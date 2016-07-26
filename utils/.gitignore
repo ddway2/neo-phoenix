@@ -1,0 +1,5 @@
+# CPKG_GITIGNORE BEGIN
+Makefile
+.cpkg
+phoenix-utils-[0-9]*
+# CPKG_GITIGNORE END

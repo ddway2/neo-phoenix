@@ -79,4 +79,25 @@ echo "**/CMakeList.txt" > .gitignore
 
 rsync -avP -q $SHAREDIR/templates/app/sources/binaries/ $BINARIES_DIR
 
+##############################################################################
+#
+# POD Documentation
+#
+##############################################################################
+: <<=cut
+=pod
+
+=head1 NAME
+
+phoenix-bootstrap - C/C++ automated project bootstrap configurator
+
+=head1 DESCRIPTION
+
+phoenix-bootstrap is very nice.
+
+=head1 SYNOPSIS
+
+  phoenix-bootstrap
+
+=cut
 

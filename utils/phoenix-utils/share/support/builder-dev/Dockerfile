@@ -1,7 +1,7 @@
 FROM ddway2/phoenix
 
-ENV USER_ID     105
-ENV USER_GID    105
+ENV USER_ID     ##USER_ID##
+ENV USER_GID    ##USER_GID##
 
 RUN groupadd -g $USER_GID phoenix && \
     adduser --quiet --uid $USER_ID --gid $USER_GID --disabled-password --gecos "" phoenix && echo "phoenix:phoenix" | chpasswd

@@ -1,12 +1,17 @@
 FROM ddway2/phoenix
 
-ADD /scripts/start.sh /scripts/start.sh
+ENV USER_ID  105
+
 RUN apt-get install -y \
-    gdb \
-    gosu
+    gdb
+
+RUN useradd --shell /bin/bash -d /src/app -u $USER_ID -o -c "" -m user
 
 VOLUME ["/src/app"]
+VOLUME ["/var/cache/apt"]
 WORKDIR /src/app
 
-ENTRYPOINT ["/scripts/start.sh"]
+
+
+CMD /bin/bash
 

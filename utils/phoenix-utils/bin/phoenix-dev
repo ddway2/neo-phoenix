@@ -5,7 +5,7 @@ set -e
 WORKDIR=$PWD
 ME=$(basename $0)
 MYDIR=$(dirname $0)
-MYDIR=$(cd $MYDIR && pwd)
+MYDIR=$(cd $MYDIR/.. && pwd)
 
 ##CPKG_DIRS##
 # CPKG BOOTSTRAP BEGIN
@@ -21,7 +21,7 @@ fi
 
 . $(cpkg-config -L)
 
-sub subs() {
+subs() {
     local VAR=$1
     local VALUE=$2
     local FILE=$3
@@ -39,8 +39,7 @@ sub subs() {
 [ -d /tmp/build-dev ] && rm -rf /tmp/build-dev
 mkdir /tmp/build-dev
 subs "USER_ID" $UID  $SHAREDIR/support/builder-dev/Dockerfile > /tmp/build-dev/Dockerfile
-subs "USER_GID" $GID  $SHAREDIR/support/builder-dev/Dockerfile > /tmp/build-dev/Dockerfile
-docker build -t builder-dev /tmp/build-dev/
+#docker build -t builder-dev /tmp/build-dev/
 
 # Run Image
-docker run -d --name=builder-dev -v $PWD:/src/app builder-dev
+#docker run -d --name=builder-dev -v $PWD:/src/app builder-dev

@@ -5,7 +5,7 @@ set -e
 WORKDIR=$PWD
 ME=$(basename $0)
 MYDIR=$(dirname $0)
-MYDIR=$(cd $MYDIR && pwd)
+MYDIR=$(cd $MYDIR/.. && pwd)
 
 ##CPKG_DIRS##
 # CPKG BOOTSTRAP BEGIN

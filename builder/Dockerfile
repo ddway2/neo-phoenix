@@ -28,23 +28,7 @@ RUN apt-get update -y && apt-get install -y cmake \
     devscripts \
     dh-autoreconf \
     dh-systemd \
-    libnghttp2-dev \
-    wget \
-    libatlas-base-dev \
-    libboost-all-dev \
-    libgflags-dev \
-    libgoogle-glog-dev \
-    libhdf5-serial-dev \
-    libleveldb-dev \
-    liblmdb-dev \
-    libopencv-dev \
-    libprotobuf-dev \
-    libsnappy-dev \
-    protobuf-compiler \
-    python-dev \
-    python-numpy \
-    python-pip \
-    python-scipy
+    libnghttp2-dev 
 
 RUN mkdir -p /build
 WORKDIR /build
@@ -64,14 +48,10 @@ RUN git clone https://github.com/ddway2/cbuild.git && \
     cpkg package -P -I && \
     rm -rf /build/*
 
-# Build Caffee
-ENV CAFFE_ROOT=/opt/caffe
-WORKDIR $CAFFE_ROOT
-RUN git clone -b master --depth 1 https://github.com/BVLC/caffe.git . && \
-    mkdir build && cd build && \
-    cmake -DBUILD_docs=0 -DCMAKE_INSTALL_PREFIX=/usr -DCPU_ONLY=1 -DBUILD_python=0 -DBUILD_python_layer=0 .. && \
-    make -j$(nproc) install && \
-    rm -rf $CAFFE_ROOT/build 
+# InstallCaffe
+ADD packages /packages
+RUN dpkg -i /packages/*.deb || true && \
+    apt-get -f -y install
 
 # Prepare to build
 RUN mkdir -p /src/app && mkdir -p /scripts

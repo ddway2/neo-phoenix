@@ -64,6 +64,15 @@ function ph_run() {
     call_in_docker "/usr/bin/$PRJ_SERVER"
 }
 
+function ph_docker_image() {
+    [[ ! -f "Dockerfile.onbuild" ]] && ph_error "Dockerfile.onbuild not found in current directory"
+    docker build -f Dockerfile.onbuild -t $PROJECT .
+}
+
+function ph_docker_run() {
+    docker run -it --rm --net=host $PROJECT
+}
+
 function usage() {
     cat <<EOF
 phoenix-build usage:
@@ -75,6 +84,8 @@ configure     - configure project (new files/new depends)
 build         - build current project
 install       - install project in dev container docker
 run           - run installed project
+image         - build docker image
+test          - test generated docker image
 EOF
 }
 
@@ -100,6 +111,12 @@ install)
 ;;
 run)
     ph_run
+;;
+image)
+    ph_docker_image
+;;
+test)
+    ph_docker_run
 ;;
 help)
     usage

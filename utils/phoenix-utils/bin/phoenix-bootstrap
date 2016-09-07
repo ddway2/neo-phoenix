@@ -7,7 +7,7 @@ ME=$(basename $0)
 MYDIR=$(dirname $0)
 MYDIR=$(cd $MYDIR/.. && pwd)
 
-PHOENIX_CONF=$WORKDIR/phoenix.conf
+CBUILD_CONF=$WORKDIR/cbuild.conf
 
 ##CPKG_DIRS##
 # CPKG BOOTSTRAP BEGIN
@@ -21,8 +21,8 @@ if [ -z "$LIBDIR" ]; then
 fi
 # CPKG BOOTSTRAP END
 
-if [[ -f $PHOENIX_CONF ]]; then
-    . $PHOENIX_CONF
+if [[ -f $CBUILD_CONF ]]; then
+    . $CBUILD_CONF
     [[ -z "$PKG_VER" ]] && PKG_VER=1.0
     (($PKG_REV)) || PKG_REV=1
     
@@ -58,7 +58,7 @@ mkdir -p $PROJECT_DIR $PROJECT_BUILD
 # Generate docker builder for project
 subs "USER_ID" $UID  $SHAREDIR/support/builder-dev/Dockerfile > $PROJECT_BUILD/Dockerfile
 docker build -t $PROJECT_DEV $PROJECT_BUILD
-docker run -d --name=$PROJECT_DEV --net=host -v $PWD:/src/app $PROJECT_DEV
+docker run -t -d --name=$PROJECT_DEV --net=host -v $PWD:/src/app $PROJECT_DEV
 
 # Generate Docker file
 cat <<EOF > $PROJECT_DIR/Dockerfile.onbuild
@@ -77,27 +77,10 @@ EOF
 INCLUDE_DIR=$PROJECT_DIR/sources/include/${PROJECT}
 BINARIES_DIR=$PROJECT_DIR/sources/binaries/${PRJ_SERVER}
 mkdir -p $INCLUDE_DIR $BINARIES_DIR
-cat <<EOF > $PROJECT_DIR/cbuild.conf
-PKG_CATS=(
-    [deb]=devel
-    [pkgsrc]=devel
-)
-PKG_VER=$PKG_VER
-PKG_REV=$PKG_REV
-PKG_SHORTDESC="$PROJECT app"
-PKG_LONGDESC="
-packaging for $PROJECT app
-"
-
-# cbuild settings
-PRJ_NAME=$PROJECT
-PRJ_OPTS["std"]=c++14
-EOF
 
 cd $PROJECT_DIR
 git init
 echo "**/CMakeList.txt" > .gitignore
-
 
 ##############################################################################
 #

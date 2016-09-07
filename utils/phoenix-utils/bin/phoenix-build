@@ -7,6 +7,8 @@ ME=$(basename $0)
 MYDIR=$(dirname $0)
 MYDIR=$(cd $MYDIR && pwd)
 
+CBUILD_CONF=$WORKDIR/cbuild.conf
+
 ##CPKG_DIRS##
 # CPKG BOOTSTRAP BEGIN
 if [ -z "$LIBDIR" ]; then
@@ -19,14 +21,94 @@ if [ -z "$LIBDIR" ]; then
 fi
 # CPKG BOOTSTRAP END
 
+function ph_error() {
+  echo "E: $@"
+  exit 1
+}
+
+if [[ -f $CBUILD_CONF ]]; then
+    . $CBUILD_CONF
+    [[ -z "$PKG_VER" ]] && PKG_VER=1.0
+    (($PKG_REV)) || PKG_REV=1
+    
+    [[ -z "$PRJ_NAME" ]] && (echo "PRJ_NAME not set" && exit 1)
+    [[ -z "$PRJ_SERVER" ]] && PRJ_SERVER=$PRJ_NAME
+else
+    ph_error "cbuild.conf require - do you use phoenix-bootstrap ?"
+fi
+PKG_NAME=${PRJ_NAME//_/-}
+
 . $(cpkg-config -L)
+
+PROJECT=$PRJ_NAME
+PROJECT_DEV=${PROJECT}-dev
+PROJECT_DIR=$WORKDIR
+
+function call_in_docker() {
+    docker exec -it $PROJECT_DEV $@
+}
+
+function ph_configure() {
+    call_in_docker "cbuild -C -y -j $(nproc)"
+}
+
+function ph_build() {
+    call_in_docker "make"
+}
+
+function ph_install() {
+    call_in_docker "sudo make install"
+}
+
+function ph_run() {
+    call_in_docker "/usr/bin/$PRJ_SERVER"
+}
+
+function usage() {
+    cat <<EOF
+phoenix-build usage:
+  phoenix-build <action>
+  
+actions:
+
+configure     - configure project (new files/new depends)
+build         - build current project
+install       - install project in dev container docker
+run           - run installed project
+EOF
+}
 
 ##################################################
 #
 # Main
 #
 ##################################################
+ACTION=$1
 
+
+
+case $ACTION in
+configure)
+    ph_configure
+;;
+build)
+    ph_build
+;;
+install)
+    ph_build
+    ph_install
+;;
+run)
+    ph_run
+;;
+help)
+    usage
+;;
+*)
+    usage
+    ph_error "Unknown Action"
+;;
+esac
 
 ##############################################################################
 #
@@ -48,3 +130,4 @@ phoenix-build is very nice.
 
   phoenix-build
 
+=cut

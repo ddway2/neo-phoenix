@@ -41,6 +41,27 @@ subs() {
     sed -e "s/##${VAR}##/${VALUE}/g" $FILE
 }
 
+ph_error() {
+    echo "E: $@"
+    exit 1
+}
+
+ph_message() {
+    echo "M: $@"
+}
+
+docker_remove_if_exists() {
+    local NAME=$1
+    local CID=$(docker ps -a -q -f name=$NAME)
+    
+    if [ -n "$CID" ]; then
+        ph_message "Remove existing image $NAME (container ID: $CID)"
+        docker stop $NAME
+        docker rm $NAME
+        docker rmi $NAME
+    fi
+}
+
 ##################################################
 #
 # Main
@@ -54,6 +75,9 @@ PROJECT_DIR=$WORKDIR
 PROJECT_BUILD=/tmp/$PROJECT
 [ -d $PROJECT_BUILD ] && rm -rf $PROJECT_BUILD
 mkdir -p $PROJECT_DIR $PROJECT_BUILD
+
+# Check if docker exists
+docker_remove_if_exists $PROJECT_DEV
 
 # Generate docker builder for project
 subs "USER_ID" $UID  $SHAREDIR/support/builder-dev/Dockerfile > $PROJECT_BUILD/Dockerfile

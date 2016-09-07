@@ -3,6 +3,8 @@ MAINTAINER Pierre Salmon <pierre.salmon@smartcontext.fr>
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ADD sources.list /etc/apt/sources.list
+
 # Update Debian Version
 RUN apt-get update -y && apt-get install -y cmake \
     build-essential \
@@ -28,7 +30,8 @@ RUN apt-get update -y && apt-get install -y cmake \
     devscripts \
     dh-autoreconf \
     dh-systemd \
-    libnghttp2-dev 
+    libopencv-dev \
+    libnghttp2-dev
 
 RUN mkdir -p /build
 WORKDIR /build
@@ -54,7 +57,9 @@ RUN dpkg -i /packages/*.deb || true && \
     apt-get -f -y install
 
 # Prepare to build
-RUN mkdir -p /src/app && mkdir -p /scripts
+RUN mkdir -p /src/app && \
+    mkdir -p /scripts && \
+    ln -s /usr/lib/x86_64-linux-gnu/pkgconfig/opencv.pc /usr/lib/x86_64-linux-gnu/pkgconfig/libopencv-dev.pc
 
 ADD scripts/build.sh /scripts/build.sh
 

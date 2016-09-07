@@ -79,8 +79,11 @@ BINARIES_DIR=$PROJECT_DIR/sources/binaries/${PRJ_SERVER}
 mkdir -p $INCLUDE_DIR $BINARIES_DIR
 
 cd $PROJECT_DIR
-git init
-echo "**/CMakeList.txt" > .gitignore
+if [ ! -d .git ]; then
+    git init
+    echo "**/CMakeList.txt" > .gitignore
+    echo "**/browse.VC.db" >> .gitignore
+fi
 
 ##############################################################################
 #

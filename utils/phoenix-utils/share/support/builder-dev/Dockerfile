@@ -11,7 +11,7 @@ RUN apt-get install -y \
     gdb 
 
 USER phoenix
-VOLUME ["/src/app"]
-WORKDIR /src/app
+VOLUME ["/src"]
+WORKDIR /src
 
 CMD ["/bin/bash"]

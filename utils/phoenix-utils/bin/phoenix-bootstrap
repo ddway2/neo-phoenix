@@ -58,7 +58,7 @@ mkdir -p $PROJECT_DIR $PROJECT_BUILD
 # Generate docker builder for project
 subs "USER_ID" $UID  $SHAREDIR/support/builder-dev/Dockerfile > $PROJECT_BUILD/Dockerfile
 docker build -t $PROJECT_DEV $PROJECT_BUILD
-docker run -t -d --name=$PROJECT_DEV --net=host -v $PWD:/src/app $PROJECT_DEV
+docker run -t -d --name=$PROJECT_DEV --net=host -v $PWD:/src $PROJECT_DEV
 
 # Generate Docker file
 cat <<EOF > $PROJECT_DIR/Dockerfile.onbuild

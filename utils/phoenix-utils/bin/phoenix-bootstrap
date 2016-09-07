@@ -7,6 +7,8 @@ ME=$(basename $0)
 MYDIR=$(dirname $0)
 MYDIR=$(cd $MYDIR/.. && pwd)
 
+PHOENIX_CONF=$WORKDIR/phoenix.conf
+
 ##CPKG_DIRS##
 # CPKG BOOTSTRAP BEGIN
 if [ -z "$LIBDIR" ]; then
@@ -18,6 +20,16 @@ if [ -z "$LIBDIR" ]; then
     export LOGDIR=$MYDIR/log
 fi
 # CPKG BOOTSTRAP END
+
+if [[ -f $PHOENIX_CONF ]]; then
+    . $PHOENIX_CONF
+    [[ -z "$PKG_VER" ]] && PKG_VER=1.0
+    (($PKG_REV)) || PKG_REV=1
+    
+    [[ -z "$PRJ_NAME" ]] && (echo "PRJ_NAME not set" && exit 1)
+    [[ -z "$PRJ_SERVER" ]] && PRJ_SERVER=$PRJ_NAME
+fi
+PKG_NAME=${PRJ_NAME//_/-}
 
 . $(cpkg-config -L)
 
@@ -35,16 +47,10 @@ subs() {
 #
 ##################################################
 
-OPTSPECS[s]="BT_SERVER_NAME:server:app server name:"
-OPTSPECS[n]="BT_MODULE_NAME::module name:$REQUIRED"
-
-cp_get_options "$@"
-cp_check_conf
-
 # Name
-PROJECT=$BT_MODULE_NAME
+PROJECT=$PRJ_NAME
 PROJECT_DEV=${PROJECT}-dev
-PROJECT_DIR=$WORKDIR/$PROJECT
+PROJECT_DIR=$WORKDIR
 PROJECT_BUILD=/tmp/$PROJECT
 [ -d $PROJECT_BUILD ] && rm -rf $PROJECT_BUILD
 mkdir -p $PROJECT_DIR $PROJECT_BUILD
@@ -58,7 +64,7 @@ docker run -d --name=$PROJECT_DEV --net=host -v $PWD:/src/app $PROJECT_DEV
 cat <<EOF > $PROJECT_DIR/Dockerfile.onbuild
 FROM ddway2/phoenix-onbuild
 
-CMD ["/usr/bin/${BT_SERVER_NAME}"]
+CMD ["/usr/bin/${PRJ_SERVER}"]
 EOF
 
 cat <<EOF > $PROJECT_DIR/Dockerfile.dev
@@ -68,16 +74,16 @@ CMD ["bash"]
 EOF
 
 # Generate project structure
-INCLUDE_DIR=$PROJECT_DIR/app/sources/include/${$PROJECT}
-BINARIES_DIR=$PROJECT_DIR/app/sources/binaries/${PROJECT}
+INCLUDE_DIR=$PROJECT_DIR/sources/include/${PROJECT}
+BINARIES_DIR=$PROJECT_DIR/sources/binaries/${PRJ_SERVER}
 mkdir -p $INCLUDE_DIR $BINARIES_DIR
-cat <<EOF > $PROJECT_DIR/app/cbuild.conf
+cat <<EOF > $PROJECT_DIR/cbuild.conf
 PKG_CATS=(
     [deb]=devel
     [pkgsrc]=devel
 )
-PKG_VER=1.0
-PKG_REV=1
+PKG_VER=$PKG_VER
+PKG_REV=$PKG_REV
 PKG_SHORTDESC="$PROJECT app"
 PKG_LONGDESC="
 packaging for $PROJECT app
@@ -92,7 +98,6 @@ cd $PROJECT_DIR
 git init
 echo "**/CMakeList.txt" > .gitignore
 
-rsync -avP -q $SHAREDIR/templates/app/sources/binaries/ $BINARIES_DIR
 
 ##############################################################################
 #

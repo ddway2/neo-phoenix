@@ -27,3 +27,24 @@ fi
 #
 ##################################################
 
+
+##############################################################################
+#
+# POD Documentation
+#
+##############################################################################
+: <<=cut
+=pod
+
+=head1 NAME
+
+phoenix-build - C/C++ automated project builder
+
+=head1 DESCRIPTION
+
+phoenix-build is very nice.
+
+=head1 SYNOPSIS
+
+  phoenix-build
+

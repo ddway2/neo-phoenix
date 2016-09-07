@@ -1,2 +1,5 @@
 .vscode
-
+browse.VC.db
+**/*.deb
+**/*.changes
+caffe-stretch

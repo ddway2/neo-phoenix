@@ -21,6 +21,14 @@ fi
 
 . $(cpkg-config -L)
 
+subs() {
+    local VAR=$1
+    local VALUE=$2
+    local FILE=$3
+
+    sed -e "s/##${VAR}##/${VALUE}/g" $FILE
+}
+
 ##################################################
 #
 # Main
@@ -35,9 +43,16 @@ cp_check_conf
 
 # Name
 PROJECT=$BT_MODULE_NAME
-
+PROJECT_DEV=${PROJECT}-dev
 PROJECT_DIR=$WORKDIR/$PROJECT
-mkdir -p $PROJECT_DIR
+PROJECT_BUILD=/tmp/$PROJECT
+[ -d $PROJECT_BUILD ] && rm -rf $PROJECT_BUILD
+mkdir -p $PROJECT_DIR $PROJECT_BUILD
+
+# Generate docker builder for project
+subs "USER_ID" $UID  $SHAREDIR/support/builder-dev/Dockerfile > $PROJECT_BUILD/Dockerfile
+docker build -t $PROJECT_DEV $PROJECT_BUILD
+docker run -d --name=$PROJECT_DEV --net=host -v $PWD:/src/app $PROJECT_DEV
 
 # Generate Docker file
 cat <<EOF > $PROJECT_DIR/Dockerfile.onbuild

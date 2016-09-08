@@ -46,11 +46,12 @@ Build docker image
 make image
 make onbuild
 ```
+
 Build pheonix-utils
-``̀
+```
 cd utils
 cpkg build
 make update-pkg
-``̀
+```
 ## Simple example
 

@@ -43,12 +43,20 @@ PKG_NAME=${PRJ_NAME//_/-}
 PROJECT=$PRJ_NAME
 PROJECT_DEV=${PROJECT}-dev
 PROJECT_DIR=$WORKDIR
+PROJECT_DEBS=$PROJECT_DIR/DEBS
+
+function install_debs {
+    if [ -d $PROJECT_DEBS ]; then
+		call_in_docker "sudo dpkg -i DEBS/*.deb || true && sudo apt-get -f -y install"
+    fi
+}
 
 function call_in_docker() {
     docker exec -it $PROJECT_DEV $@
 }
 
 function ph_configure() {
+	install_debs
     call_in_docker "cbuild -C -y -j $(nproc)"
 }
 

@@ -127,6 +127,8 @@ install)
     ph_install
 ;;
 run)
+    ph_build
+    ph_install
     ph_run
 ;;
 image)
